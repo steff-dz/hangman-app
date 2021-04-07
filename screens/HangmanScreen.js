@@ -6,7 +6,7 @@ import styled from 'styled-components/native'
 const HangmanScreen = () => {
   const [gameOver, setGameOver] = useState(true)
   const [modalDisplay, setModalDisplay] = useState(true)
-  const [word, setWord] = useState('')
+  const [word, setWord] = useState([])
   const Alphabet = [
     'A',
     'B',
@@ -53,7 +53,9 @@ const HangmanScreen = () => {
 
   function submitWord() {
     console.log(word)
-    console.log(word.length)
+    let splitWord = word[0].split('')
+    setWord(splitWord)
+    //setWord(word[0].split(''))
     // word.split('')
     // console.log(word)
     setModalDisplay(false)
@@ -61,8 +63,9 @@ const HangmanScreen = () => {
   }
 
   function renderWord() {
-    let splitWord = word.split('')
-    return splitWord.map((letter, index) => <View key={index} style={styles.letterBox}></View>)
+    //let splitWord = word.split('')
+    //let splitWord = word[0].split('')
+    return word.map((letter, index) => <View key={index} style={styles.letterBox}></View>)
   }
 
   function renderAlphabet() {
@@ -74,8 +77,13 @@ const HangmanScreen = () => {
   }
 
   function letterPress(letter) {
-    console.log(letter)
-    console.log(word)
+    let lowerLetter = letter.toLowerCase()
+    let match = word.find((el) => el === lowerLetter)
+    console.log(match)
+
+    //console.log(word)
+    // let match = word.find((el) => el == letter)
+    // console.log(match)
   }
   return (
     <Wrapper>
@@ -87,9 +95,11 @@ const HangmanScreen = () => {
       ) : (
         showImage()
       )}
-      <WordContainer>{word ? renderWord() : <Text>There is no word!</Text>}</WordContainer>
+      <WordContainer>
+        {word.length !== 0 ? renderWord() : <Text>There is no word!</Text>}
+      </WordContainer>
       <AlphabetContainer>
-        {word ? renderAlphabet() : <Text>Game hasn't started!</Text>}
+        {gameOver ? <Text>Game hasn't started!</Text> : renderAlphabet()}
       </AlphabetContainer>
 
       <Modal
@@ -105,7 +115,7 @@ const HangmanScreen = () => {
           <TextInput
             style={styles.inputStyle}
             placeholder="type a word"
-            onChangeText={(txt) => setWord(txt)}
+            onChangeText={(txt) => setWord([txt])}
           />
           <SubmitButton onPress={() => submitWord()}>
             <ButtonText>Submit</ButtonText>
