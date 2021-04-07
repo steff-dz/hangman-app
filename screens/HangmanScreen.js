@@ -7,6 +7,34 @@ const HangmanScreen = () => {
   const [gameOver, setGameOver] = useState(true)
   const [modalDisplay, setModalDisplay] = useState(true)
   const [word, setWord] = useState('')
+  const Alphabet = [
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z',
+  ]
 
   function showImage() {
     return (
@@ -24,7 +52,30 @@ const HangmanScreen = () => {
   }
 
   function submitWord() {
+    console.log(word)
+    console.log(word.length)
+    // word.split('')
+    // console.log(word)
     setModalDisplay(false)
+    setGameOver(false)
+  }
+
+  function renderWord() {
+    let splitWord = word.split('')
+    return splitWord.map((letter, index) => <View key={index} style={styles.letterBox}></View>)
+  }
+
+  function renderAlphabet() {
+    return Alphabet.map((letter, index) => (
+      <TouchableOpacity key={index} style={styles.alphaBox} onPress={() => letterPress(letter)}>
+        <Text style={styles.alphaText}>{letter}</Text>
+      </TouchableOpacity>
+    ))
+  }
+
+  function letterPress(letter) {
+    console.log(letter)
+    console.log(word)
   }
   return (
     <Wrapper>
@@ -36,6 +87,10 @@ const HangmanScreen = () => {
       ) : (
         showImage()
       )}
+      <WordContainer>{word ? renderWord() : <Text>There is no word!</Text>}</WordContainer>
+      <AlphabetContainer>
+        {word ? renderAlphabet() : <Text>Game hasn't started!</Text>}
+      </AlphabetContainer>
 
       <Modal
         animationType="slide"
@@ -95,6 +150,33 @@ const SubmitButton = styled.TouchableOpacity`
   background-color: lightgrey;
 `
 
+const WordContainer = styled.View`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  margin-top: 10px;
+`
+
+const AlphabetContainer = styled.View`
+  margin-top: 10px;
+  width: 100%;
+  height: 100%;
+  background-color: lightgrey;
+  border: 1px solid black;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+`
+
+// const LetterBox = styled.View`
+//   height: 50px;
+//   width: 50px;
+//   border-bottom-color: black;
+//   border-bottom-width: 2px;
+//   background-color: lightgreen;
+// `
+
 const styles = StyleSheet.create({
   inputStyle: {
     borderWidth: 1,
@@ -105,5 +187,24 @@ const styles = StyleSheet.create({
     height: 30,
     marginTop: 10,
   },
+  letterBox: {
+    height: 50,
+    width: 50,
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+    backgroundColor: 'lightgrey',
+    marginLeft: 2,
+    marginRight: 2,
+  },
+  alphaBox: {
+    height: 50,
+    width: 50,
+  },
+  alphaText: {
+    fontSize: 40,
+    textAlign: 'center',
+  },
 })
 export default HangmanScreen
+
+//{word.length > 0 ? renderWord() : <Text>Word will come here</Text>}
