@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { View, Modal, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
 import Svg, { Circle, Rect, Line, G } from 'react-native-svg'
 import styled from 'styled-components/native'
@@ -6,7 +6,10 @@ import styled from 'styled-components/native'
 const HangmanScreen = () => {
   const [gameOver, setGameOver] = useState(true)
   const [modalDisplay, setModalDisplay] = useState(true)
+  const [inputWord, setInputWord] = useState(null)
   const [word, setWord] = useState([])
+  const [errors, setErrors] = useState(0)
+  const [answer, setAnswer] = useState([])
   const Alphabet = [
     'A',
     'B',
@@ -36,6 +39,11 @@ const HangmanScreen = () => {
     'Z',
   ]
 
+  useEffect(() => {
+    console.log('errors state:', errors)
+    console.log(word)
+  }, [errors, word])
+
   function showImage() {
     return (
       <View style={{ borderWidth: 1 }}>
@@ -52,9 +60,21 @@ const HangmanScreen = () => {
   }
 
   function submitWord() {
-    console.log(word)
-    let splitWord = word[0].split('')
-    setWord(splitWord)
+    console.log(inputWord)
+    const splitWord = inputWord.split('')
+    console.log(splitWord)
+    const wordObjectArray = []
+    splitWord.forEach((char) => {
+      wordObjectArray.push({ letter: char, guessed: false })
+    })
+    setWord(wordObjectArray)
+    // let splitWord = word[0].split('')
+    // console.log(splitWord)
+
+    // splitWord.forEach((el) => {
+    //   setWord([...word, { letter: el, guessed: false }])
+    // })
+    //setWord(splitWord)
     //setWord(word[0].split(''))
     // word.split('')
     // console.log(word)
@@ -65,7 +85,12 @@ const HangmanScreen = () => {
   function renderWord() {
     //let splitWord = word.split('')
     //let splitWord = word[0].split('')
-    return word.map((letter, index) => <View key={index} style={styles.letterBox}></View>)
+    //console.log('hey from render word func', word)
+    return word.map((char, index) => (
+      <View key={index} style={styles.letterBox}>
+        <Text style={styles.letterText}>{char.letter}</Text>
+      </View>
+    ))
   }
 
   function renderAlphabet() {
@@ -77,13 +102,15 @@ const HangmanScreen = () => {
   }
 
   function letterPress(letter) {
+    console.log(word)
     let lowerLetter = letter.toLowerCase()
     let match = word.find((el) => el === lowerLetter)
-    console.log(match)
-
-    //console.log(word)
-    // let match = word.find((el) => el == letter)
-    // console.log(match)
+    if (match) {
+      console.log(match, 'correct guess!')
+    } else {
+      setErrors(errors + 1)
+      console.log('wrong guess')
+    }
   }
   return (
     <Wrapper>
@@ -115,7 +142,7 @@ const HangmanScreen = () => {
           <TextInput
             style={styles.inputStyle}
             placeholder="type a word"
-            onChangeText={(txt) => setWord([txt])}
+            onChangeText={(txt) => setInputWord(txt)}
           />
           <SubmitButton onPress={() => submitWord()}>
             <ButtonText>Submit</ButtonText>
@@ -198,14 +225,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   letterBox: {
-    height: 50,
-    width: 50,
+    height: 40,
+    width: 40,
     borderBottomColor: 'black',
     borderBottomWidth: 1,
     backgroundColor: 'lightgrey',
     marginLeft: 2,
     marginRight: 2,
   },
+  letterText: {},
   alphaBox: {
     height: 50,
     width: 50,
