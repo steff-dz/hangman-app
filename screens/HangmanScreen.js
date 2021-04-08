@@ -41,7 +41,7 @@ const HangmanScreen = () => {
 
   useEffect(() => {
     console.log('errors state:', errors)
-    console.log(word)
+    //console.log(word)
   }, [errors, word])
 
   function showImage() {
@@ -83,12 +83,9 @@ const HangmanScreen = () => {
   }
 
   function renderWord() {
-    //let splitWord = word.split('')
-    //let splitWord = word[0].split('')
-    //console.log('hey from render word func', word)
     return word.map((char, index) => (
       <View key={index} style={styles.letterBox}>
-        <Text style={styles.letterText}>{char.letter}</Text>
+        <Text style={char.guessed ? styles.letterText : styles.hiddenText}>{char.letter}</Text>
       </View>
     ))
   }
@@ -102,16 +99,49 @@ const HangmanScreen = () => {
   }
 
   function letterPress(letter) {
-    console.log(word)
+    console.log('first run:', word)
     let lowerLetter = letter.toLowerCase()
-    let match = word.find((el) => el === lowerLetter)
-    if (match) {
-      console.log(match, 'correct guess!')
-    } else {
-      setErrors(errors + 1)
-      console.log('wrong guess')
-    }
+    console.log(lowerLetter)
+
+    // let doubleMatch = word.filter((el) => el.letter === lowerLetter)
+    // console.log('this is the double match:', doubleMatch)
+
+    // let filteredLetter = word.filter((el) => el.letter === lowerLetter)
+    // console.log('here is thie filtered letter:', filteredLetter)
+
+    // filteredLetter.forEach((el) => (el.guessed = true))
+    // console.log('changed guessed to true:', filteredLetter)
+
+    let newArray = []
+    word.forEach((el) => {
+      if (el.letter === lowerLetter) {
+        el.guessed = true
+        newArray.push(el)
+      } else {
+        newArray.push(el)
+      }
+    }),
+      setWord(newArray)
+    // console.log('this is the new array', newArray)
+    // console.log('second run', word)
+
+    // let match = word.findIndex((el) => el.letter === lowerLetter)
+    // console.log('this is the single match index:', match)
+
+    //have to find the index of the letter pressed
+
+    // if (match !== -1) {
+    //   console.log(match, 'correct guess!')
+    //   match.guessed = true
+    //   const newArray = [...word]
+    //   newArray[match] = { ...newArray[match], guessed: true }
+    //   setWord(newArray)
+    // } else {
+    //   setErrors(errors + 1)
+    //   console.log('wrong guess')
+    // }
   }
+
   return (
     <Wrapper>
       <PageTitle>Hangman Game</PageTitle>
@@ -233,7 +263,12 @@ const styles = StyleSheet.create({
     marginLeft: 2,
     marginRight: 2,
   },
-  letterText: {},
+  letterText: {
+    fontSize: 30,
+  },
+  hiddenText: {
+    display: 'none',
+  },
   alphaBox: {
     height: 50,
     width: 50,
