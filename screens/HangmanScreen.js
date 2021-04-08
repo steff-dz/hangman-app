@@ -9,7 +9,7 @@ const HangmanScreen = () => {
   const [inputWord, setInputWord] = useState(null)
   const [word, setWord] = useState([])
   const [errors, setErrors] = useState(0)
-  const [answer, setAnswer] = useState([])
+  const [correctGuess, setCorrectGuess] = useState(0)
   const Alphabet = [
     'A',
     'B',
@@ -41,19 +41,48 @@ const HangmanScreen = () => {
 
   useEffect(() => {
     console.log('errors state:', errors)
+    if (errors === 6) {
+      console.log('you lost sucka!')
+      setGameOver(true)
+      setErrors(0)
+      setInputWord(null)
+    }
+
+    //console.log('word length is:', word.length, correctGuess)
     //console.log(word)
-  }, [errors, word])
+  }, [errors])
+
+  useEffect(() => {
+    console.log('from word use Effect:', word.length)
+    // word.forEach((char) => {
+    //   if (char.guessed !== false) {
+    //     console.log('no falses!')
+    //   } else {
+    //     console.log('this is false:', char.letter, char.guessed)
+    //   }
+    // })
+  }, [word])
+
+  useEffect(() => {
+    console.log('correctGuess:', correctGuess)
+  }, [correctGuess])
 
   function showImage() {
     return (
       <View style={{ borderWidth: 1 }}>
         <Svg height="250" width="200">
-          <Circle cx="100" cy="50" r="25" stroke="black" strokeWidth="2.5" fill="lightgrey" />
-          <Rect x="98" y="75" width="5" height="80" stroke="black" strokeWidth="2" fill="black" />
-          <Line x1="40" y1="130" x2="100" y2="85" stroke="black" strokeWidth="2" />
-          <Line x1="160" y1="130" x2="100" y2="85" stroke="black" strokeWidth="2" />
-          <Line x1="50" y1="200" x2="100" y2="150" stroke="black" strokeWidth="2" />
-          <Line x1="150" y1="200" x2="100" y2="150" stroke="black" strokeWidth="2" />
+          {errors > 0 && (
+            <Circle cx="100" cy="50" r="25" stroke="black" strokeWidth="2.5" fill="lightgrey" />
+          )}
+          {errors > 1 && (
+            <Rect x="98" y="75" width="5" height="80" stroke="black" strokeWidth="2" fill="black" />
+          )}
+          {errors > 2 && <Line x1="40" y1="130" x2="100" y2="85" stroke="black" strokeWidth="2" />}
+          {errors > 3 && <Line x1="160" y1="130" x2="100" y2="85" stroke="black" strokeWidth="2" />}
+          {errors > 4 && <Line x1="50" y1="200" x2="100" y2="150" stroke="black" strokeWidth="2" />}
+          {errors > 5 && (
+            <Line x1="150" y1="200" x2="100" y2="150" stroke="black" strokeWidth="2" />
+          )}
         </Svg>
       </View>
     )
@@ -68,16 +97,6 @@ const HangmanScreen = () => {
       wordObjectArray.push({ letter: char, guessed: false })
     })
     setWord(wordObjectArray)
-    // let splitWord = word[0].split('')
-    // console.log(splitWord)
-
-    // splitWord.forEach((el) => {
-    //   setWord([...word, { letter: el, guessed: false }])
-    // })
-    //setWord(splitWord)
-    //setWord(word[0].split(''))
-    // word.split('')
-    // console.log(word)
     setModalDisplay(false)
     setGameOver(false)
   }
@@ -92,54 +111,40 @@ const HangmanScreen = () => {
 
   function renderAlphabet() {
     return Alphabet.map((letter, index) => (
-      <TouchableOpacity key={index} style={styles.alphaBox} onPress={() => letterPress(letter)}>
+      <TouchableOpacity
+        key={index}
+        style={styles.alphaBox}
+        onPress={() => letterPressHandler(letter)}
+      >
         <Text style={styles.alphaText}>{letter}</Text>
       </TouchableOpacity>
     ))
   }
 
-  function letterPress(letter) {
-    console.log('first run:', word)
+  function letterPressHandler(letter) {
     let lowerLetter = letter.toLowerCase()
-    console.log(lowerLetter)
+    let match = word.find((el) => el.letter === lowerLetter)
+    let filteredWord = word.filter((el) => el.letter === lowerLetter)
 
-    // let doubleMatch = word.filter((el) => el.letter === lowerLetter)
-    // console.log('this is the double match:', doubleMatch)
+    console.log('this is the filtered word length:', filteredWord.length)
 
-    // let filteredLetter = word.filter((el) => el.letter === lowerLetter)
-    // console.log('here is thie filtered letter:', filteredLetter)
+    if (filteredWord.length > 1) {
+      console.log('this is the filtered words:', filteredWord, filteredWord.length)
+      setCorrectGuess(correctGuess + 2)
+    } else if (filteredWord.length === 1) {
+      setCorrectGuess(correctGuess + 1)
+    } else if (filteredWord.length === 0) {
+      setErrors(errors + 1)
+    }
 
-    // filteredLetter.forEach((el) => (el.guessed = true))
-    // console.log('changed guessed to true:', filteredLetter)
-
-    let newArray = []
-    word.forEach((el) => {
-      if (el.letter === lowerLetter) {
-        el.guessed = true
-        newArray.push(el)
-      } else {
-        newArray.push(el)
-      }
-    }),
-      setWord(newArray)
-    // console.log('this is the new array', newArray)
-    // console.log('second run', word)
-
-    // let match = word.findIndex((el) => el.letter === lowerLetter)
-    // console.log('this is the single match index:', match)
-
-    //have to find the index of the letter pressed
-
-    // if (match !== -1) {
-    //   console.log(match, 'correct guess!')
-    //   match.guessed = true
-    //   const newArray = [...word]
-    //   newArray[match] = { ...newArray[match], guessed: true }
-    //   setWord(newArray)
+    // if (match) {
+    //   console.log('it exists!')
     // } else {
+    //   console.log('this letter is wrong')
     //   setErrors(errors + 1)
-    //   console.log('wrong guess')
     // }
+    let newArray = word.map((el) => (el.letter === lowerLetter ? { ...el, guessed: true } : el))
+    setWord(newArray)
   }
 
   return (
@@ -153,7 +158,8 @@ const HangmanScreen = () => {
         showImage()
       )}
       <WordContainer>
-        {word.length !== 0 ? renderWord() : <Text>There is no word!</Text>}
+        {/* {word.length !== 0 ? renderWord() : <Text>There is no word!</Text>} */}
+        {!gameOver && renderWord()}
       </WordContainer>
       <AlphabetContainer>
         {gameOver ? <Text>Game hasn't started!</Text> : renderAlphabet()}
