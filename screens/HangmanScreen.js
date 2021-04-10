@@ -2,6 +2,34 @@ import React, { useState, useEffect } from 'react'
 import { View, Modal, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
 import Svg, { Circle, Rect, Line, G } from 'react-native-svg'
 import styled from 'styled-components/native'
+const Alphabet = [
+  { letter: 'A', guessed: false },
+  { letter: 'B', guessed: false },
+  { letter: 'C', guessed: false },
+  { letter: 'D', guessed: false },
+  { letter: 'E', guessed: false },
+  { letter: 'F', guessed: false },
+  { letter: 'G', guessed: false },
+  { letter: 'H', guessed: false },
+  { letter: 'I', guessed: false },
+  { letter: 'J', guessed: false },
+  { letter: 'K', guessed: false },
+  { letter: 'L', guessed: false },
+  { letter: 'M', guessed: false },
+  { letter: 'N', guessed: false },
+  { letter: 'O', guessed: false },
+  { letter: 'P', guessed: false },
+  { letter: 'Q', guessed: false },
+  { letter: 'R', guessed: false },
+  { letter: 'S', guessed: false },
+  { letter: 'T', guessed: false },
+  { letter: 'U', guessed: false },
+  { letter: 'V', guessed: false },
+  { letter: 'W', guessed: false },
+  { letter: 'X', guessed: false },
+  { letter: 'Y', guessed: false },
+  { letter: 'Z', guessed: false },
+]
 
 const HangmanScreen = () => {
   const [gameOver, setGameOver] = useState(true)
@@ -11,34 +39,7 @@ const HangmanScreen = () => {
   const [word, setWord] = useState([])
   const [errors, setErrors] = useState(0)
   const [correctGuess, setCorrectGuess] = useState(0)
-  const Alphabet = [
-    'A',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'H',
-    'I',
-    'J',
-    'K',
-    'L',
-    'M',
-    'N',
-    'O',
-    'P',
-    'Q',
-    'R',
-    'S',
-    'T',
-    'U',
-    'V',
-    'W',
-    'X',
-    'Y',
-    'Z',
-  ]
+  const [alphabetList, setAlphabetList] = useState(Alphabet)
 
   //useEffect keeping track of errors---------------
   useEffect(() => {
@@ -121,13 +122,13 @@ const HangmanScreen = () => {
 
   //funciton to render the alphabet---------------------------
   function renderAlphabet() {
-    return Alphabet.map((letter, index) => (
+    return alphabetList.map((char, index) => (
       <TouchableOpacity
         key={index}
         style={styles.alphaBox}
-        onPress={() => letterPressHandler(letter)}
+        onPress={() => letterPressHandler(char.letter)}
       >
-        <Text style={styles.alphaText}>{letter}</Text>
+        <Text style={char.guessed ? styles.hiddenText : styles.alphaText}>{char.letter}</Text>
       </TouchableOpacity>
     ))
   }
@@ -135,7 +136,11 @@ const HangmanScreen = () => {
   //function to handle guessing a letter---------------------
   //Could change this func name to guessHandler()
   function letterPressHandler(letter) {
-    console.log(word)
+    let newArray = alphabetList.map((el) => (el.letter === letter ? { ...el, guessed: true } : el))
+    setAlphabetList(newArray)
+    console.log(alphabetList)
+
+    //handling the word functionality---------------
     let lowerLetter = letter.toLowerCase()
     let filteredWord = word.filter((el) => el.letter === lowerLetter)
 
@@ -150,8 +155,9 @@ const HangmanScreen = () => {
       setErrors(errors + 1)
     }
 
-    let newArray = word.map((el) => (el.letter === lowerLetter ? { ...el, guessed: true } : el))
-    setWord(newArray)
+    let newWordArray = word.map((el) => (el.letter === lowerLetter ? { ...el, guessed: true } : el))
+    console.log(newWordArray)
+    setWord(newWordArray)
   }
 
   function newGameHandler() {
@@ -171,6 +177,7 @@ const HangmanScreen = () => {
     setInputWord(null)
     setCorrectGuess(0)
     setPlayerWon(false)
+    setAlphabetList(Alphabet)
   }
 
   return (
