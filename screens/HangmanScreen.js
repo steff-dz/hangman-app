@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Modal, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
 import Svg, { Circle, Rect, Line, G } from 'react-native-svg'
 import styled from 'styled-components/native'
@@ -6,6 +6,7 @@ import styled from 'styled-components/native'
 const HangmanScreen = () => {
   const [gameOver, setGameOver] = useState(true)
   const [modalDisplay, setModalDisplay] = useState(true)
+  const [playerWon, setPlayerWon] = useState(false)
   const [inputWord, setInputWord] = useState(null)
   const [word, setWord] = useState([])
   const [errors, setErrors] = useState(0)
@@ -39,34 +40,40 @@ const HangmanScreen = () => {
     'Z',
   ]
 
+  //useEffect keeping track of errors---------------
   useEffect(() => {
     console.log('errors state:', errors)
     if (errors === 6) {
       console.log('you lost sucka!')
-      setGameOver(true)
-      setErrors(0)
-      setInputWord(null)
+      refreshGameHandler()
     }
-
-    //console.log('word length is:', word.length, correctGuess)
-    //console.log(word)
   }, [errors])
 
   useEffect(() => {
     console.log('from word use Effect:', word.length)
-    // word.forEach((char) => {
-    //   if (char.guessed !== false) {
-    //     console.log('no falses!')
-    //   } else {
-    //     console.log('this is false:', char.letter, char.guessed)
-    //   }
-    // })
   }, [word])
 
+  //UseEffect keeping track of correct guesses---------------
   useEffect(() => {
     console.log('correctGuess:', correctGuess)
+    if (correctGuess === 0) {
+      return
+    } else if (correctGuess === word.length) {
+      console.log('you won!')
+      setPlayerWon(true)
+    }
   }, [correctGuess])
 
+  //function to conditionally show a message or hangman character-----
+  function showImageHandler() {
+    if (playerWon) {
+      return newGameHandler()
+    } else {
+      return showImage()
+    }
+  }
+
+  //function to render hangman SVG char---------------------------
   function showImage() {
     return (
       <View style={{ borderWidth: 1 }}>
@@ -88,6 +95,8 @@ const HangmanScreen = () => {
     )
   }
 
+  //function to handle word submit------------------------------
+  //**NEED TO ADD MORE INPUT CHECKING HERE BEFORE SETTING THE WORD!
   function submitWord() {
     console.log(inputWord)
     const splitWord = inputWord.split('')
@@ -101,6 +110,7 @@ const HangmanScreen = () => {
     setGameOver(false)
   }
 
+  //funciton to show the inputted word-------------------------
   function renderWord() {
     return word.map((char, index) => (
       <View key={index} style={styles.letterBox}>
@@ -109,6 +119,7 @@ const HangmanScreen = () => {
     ))
   }
 
+  //funciton to render the alphabet---------------------------
   function renderAlphabet() {
     return Alphabet.map((letter, index) => (
       <TouchableOpacity
@@ -121,9 +132,11 @@ const HangmanScreen = () => {
     ))
   }
 
+  //function to handle guessing a letter---------------------
+  //Could change this func name to guessHandler()
   function letterPressHandler(letter) {
+    console.log(word)
     let lowerLetter = letter.toLowerCase()
-    let match = word.find((el) => el.letter === lowerLetter)
     let filteredWord = word.filter((el) => el.letter === lowerLetter)
 
     console.log('this is the filtered word length:', filteredWord.length)
@@ -137,14 +150,27 @@ const HangmanScreen = () => {
       setErrors(errors + 1)
     }
 
-    // if (match) {
-    //   console.log('it exists!')
-    // } else {
-    //   console.log('this letter is wrong')
-    //   setErrors(errors + 1)
-    // }
     let newArray = word.map((el) => (el.letter === lowerLetter ? { ...el, guessed: true } : el))
     setWord(newArray)
+  }
+
+  function newGameHandler() {
+    return (
+      <>
+        <Text>You won!</Text>
+        <TouchableOpacity onPress={() => refreshGameHandler()}>
+          <Text>Play Again</Text>
+        </TouchableOpacity>
+      </>
+    )
+  }
+
+  function refreshGameHandler() {
+    setGameOver(true)
+    setErrors(0)
+    setInputWord(null)
+    setCorrectGuess(0)
+    setPlayerWon(false)
   }
 
   return (
@@ -155,15 +181,14 @@ const HangmanScreen = () => {
           <ButtonText>Start Game</ButtonText>
         </StartButton>
       ) : (
-        showImage()
+        showImageHandler()
       )}
       <WordContainer>
         {/* {word.length !== 0 ? renderWord() : <Text>There is no word!</Text>} */}
         {!gameOver && renderWord()}
       </WordContainer>
-      <AlphabetContainer>
-        {gameOver ? <Text>Game hasn't started!</Text> : renderAlphabet()}
-      </AlphabetContainer>
+      {!gameOver && <AlphabetContainer>{renderAlphabet()}</AlphabetContainer>}
+      {/* <AlphabetContainer>{!gameOver && renderAlphabet()}</AlphabetContainer> */}
 
       <Modal
         animationType="slide"
@@ -241,14 +266,6 @@ const AlphabetContainer = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
 `
-
-// const LetterBox = styled.View`
-//   height: 50px;
-//   width: 50px;
-//   border-bottom-color: black;
-//   border-bottom-width: 2px;
-//   background-color: lightgreen;
-// `
 
 const styles = StyleSheet.create({
   inputStyle: {
