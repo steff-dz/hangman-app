@@ -97,26 +97,20 @@ const HangmanScreen = () => {
   }
 
   //function to handle word submit------------------------------
-  //**NEED TO ADD MORE INPUT CHECKING HERE BEFORE SETTING THE WORD!
   function submitWord() {
-    // Alert.alert('Alert Title', 'My Alert Msg', [
-    //   {
-    //     text: 'Cancel',
-    //     onPress: () => console.log('you clicked cancel on alert message'),
-    //   },
-    // ])
-
-    console.log(inputWord)
+    //Check to make sure there is no spaces or numbers--
     const hasSpaces = inputWord.includes(' ')
-    if (hasSpaces) {
-      Alert.alert('Alert', 'Please write a single word, no spaces!', [
+    const hasNumbers = /\d/.test(inputWord)
+
+    if (hasSpaces || hasNumbers) {
+      Alert.alert('Alert', 'Please write a single word, no spaces or numbers!', [
         {
-          text: 'Ok',
+          text: 'Try Again',
         },
       ])
     } else {
+      //if it does not include spaces or numbers, split the word and store it into an array of letter objects
       const splitWord = inputWord.split('')
-      console.log(splitWord)
       const wordObjectArray = []
       splitWord.forEach((char) => {
         wordObjectArray.push({ letter: char, guessed: false })
@@ -125,16 +119,6 @@ const HangmanScreen = () => {
       setModalDisplay(false)
       setGameOver(false)
     }
-
-    // const splitWord = inputWord.split('')
-    // console.log(splitWord)
-    // const wordObjectArray = []
-    // splitWord.forEach((char) => {
-    //   wordObjectArray.push({ letter: char, guessed: false })
-    // })
-    // setWord(wordObjectArray)
-    // setModalDisplay(false)
-    // setGameOver(false)
   }
 
   //funciton to show the inputted word-------------------------
@@ -160,20 +144,15 @@ const HangmanScreen = () => {
   }
 
   //function to handle guessing a letter---------------------
-  //Could change this func name to guessHandler()
   function letterPressHandler(letter) {
     let newArray = alphabetList.map((el) => (el.letter === letter ? { ...el, guessed: true } : el))
     setAlphabetList(newArray)
-    console.log(alphabetList)
 
-    //handling the word functionality---------------
+    //handling the word functionality--
     let lowerLetter = letter.toLowerCase()
     let filteredWord = word.filter((el) => el.letter === lowerLetter)
 
-    console.log('this is the filtered word length:', filteredWord.length)
-
     if (filteredWord.length > 1) {
-      console.log('this is the filtered words:', filteredWord, filteredWord.length)
       setCorrectGuess(correctGuess + 2)
     } else if (filteredWord.length === 1) {
       setCorrectGuess(correctGuess + 1)
@@ -182,7 +161,7 @@ const HangmanScreen = () => {
     }
 
     let newWordArray = word.map((el) => (el.letter === lowerLetter ? { ...el, guessed: true } : el))
-    console.log(newWordArray)
+
     setWord(newWordArray)
   }
 
@@ -216,12 +195,8 @@ const HangmanScreen = () => {
       ) : (
         showImageHandler()
       )}
-      <WordContainer>
-        {/* {word.length !== 0 ? renderWord() : <Text>There is no word!</Text>} */}
-        {!gameOver && renderWord()}
-      </WordContainer>
+      <WordContainer>{!gameOver && renderWord()}</WordContainer>
       {!gameOver && <AlphabetContainer>{renderAlphabet()}</AlphabetContainer>}
-      {/* <AlphabetContainer>{!gameOver && renderAlphabet()}</AlphabetContainer> */}
 
       <Modal
         animationType="slide"
