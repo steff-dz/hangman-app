@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Modal, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Modal, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import Svg, { Circle, Rect, Line, G } from 'react-native-svg'
 import styled from 'styled-components/native'
 const Alphabet = [
@@ -99,16 +99,42 @@ const HangmanScreen = () => {
   //function to handle word submit------------------------------
   //**NEED TO ADD MORE INPUT CHECKING HERE BEFORE SETTING THE WORD!
   function submitWord() {
+    // Alert.alert('Alert Title', 'My Alert Msg', [
+    //   {
+    //     text: 'Cancel',
+    //     onPress: () => console.log('you clicked cancel on alert message'),
+    //   },
+    // ])
+
     console.log(inputWord)
-    const splitWord = inputWord.split('')
-    console.log(splitWord)
-    const wordObjectArray = []
-    splitWord.forEach((char) => {
-      wordObjectArray.push({ letter: char, guessed: false })
-    })
-    setWord(wordObjectArray)
-    setModalDisplay(false)
-    setGameOver(false)
+    const hasSpaces = inputWord.includes(' ')
+    if (hasSpaces) {
+      Alert.alert('Alert', 'Please write a single word, no spaces!', [
+        {
+          text: 'Ok',
+        },
+      ])
+    } else {
+      const splitWord = inputWord.split('')
+      console.log(splitWord)
+      const wordObjectArray = []
+      splitWord.forEach((char) => {
+        wordObjectArray.push({ letter: char, guessed: false })
+      })
+      setWord(wordObjectArray)
+      setModalDisplay(false)
+      setGameOver(false)
+    }
+
+    // const splitWord = inputWord.split('')
+    // console.log(splitWord)
+    // const wordObjectArray = []
+    // splitWord.forEach((char) => {
+    //   wordObjectArray.push({ letter: char, guessed: false })
+    // })
+    // setWord(wordObjectArray)
+    // setModalDisplay(false)
+    // setGameOver(false)
   }
 
   //funciton to show the inputted word-------------------------
