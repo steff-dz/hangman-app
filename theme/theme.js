@@ -8,8 +8,12 @@ const theme = {
     xl: 40,
   },
   palette: {
-    black: '#111',
-    white: '#fff',
+    black: '#0f0e17',
+    white: '#fffffe',
+    lightgrey: '#a7a9be',
+    orange: '#ff8906',
+    coral: '#f25f4c',
+    pink: '#e53170',
   },
 }
 

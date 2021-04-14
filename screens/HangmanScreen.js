@@ -3,6 +3,7 @@ import { View, Modal, Text, TextInput, StyleSheet, TouchableOpacity, Alert } fro
 import Svg, { Circle, Rect, Line, G } from 'react-native-svg'
 import styled from 'styled-components/native'
 
+//this can be moved into a seperate file
 const Alphabet = [
   { letter: 'A', guessed: false },
   { letter: 'B', guessed: false },
@@ -225,6 +226,7 @@ const HangmanScreen = () => {
   )
 }
 
+//move styling into a seperate file
 const Wrapper = styled.View`
   border: 1px solid pink;
   display: flex;
