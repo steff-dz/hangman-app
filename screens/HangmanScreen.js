@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, Modal, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import Svg, { Circle, Rect, Line, G } from 'react-native-svg'
 import styled from 'styled-components/native'
+
 const Alphabet = [
   { letter: 'A', guessed: false },
   { letter: 'B', guessed: false },
@@ -46,13 +47,14 @@ const HangmanScreen = () => {
     console.log('errors state:', errors)
     if (errors === 6) {
       console.log('you lost sucka!')
+      Alert.alert('Alert', 'Player 2 Lost! Play Again!', [
+        {
+          text: 'Try Again',
+        },
+      ])
       refreshGameHandler()
     }
   }, [errors])
-
-  useEffect(() => {
-    console.log('from word use Effect:', word.length)
-  }, [word])
 
   //UseEffect keeping track of correct guesses---------------
   useEffect(() => {
@@ -77,8 +79,9 @@ const HangmanScreen = () => {
   //function to render hangman SVG char---------------------------
   function showImage() {
     return (
-      <View style={{ borderWidth: 1 }}>
+      <View style={{ borderBottomWidth: 15, borderRightWidth: 5, borderTopWidth: 5 }}>
         <Svg height="250" width="200">
+          <Line x1="100" y1="0" x2="100" y2="30" stroke="black" strokeWidth="5" id="rope" />
           {errors > 0 && (
             <Circle cx="100" cy="50" r="25" stroke="black" strokeWidth="2.5" fill="lightgrey" />
           )}
