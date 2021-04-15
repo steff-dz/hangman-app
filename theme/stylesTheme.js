@@ -38,10 +38,3 @@ export const styles = StyleSheet.create({
     fontFamily: 'Ubuntu_300Light',
   },
 })
-
-// const MenuItem = styled.TouchableOpacity`
-//   margin-top: 10%;
-//   background-color: #ff8906;
-//   padding: 15px;
-//   border-radius: 15px;
-// `

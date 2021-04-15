@@ -35,7 +35,7 @@ const Alphabet = [
 
 const HangmanScreen = () => {
   const [gameOver, setGameOver] = useState(true)
-  const [modalDisplay, setModalDisplay] = useState(true)
+  const [modalDisplay, setModalDisplay] = useState(false)
   const [playerWon, setPlayerWon] = useState(false)
   const [inputWord, setInputWord] = useState(null)
   const [word, setWord] = useState([])
@@ -252,6 +252,7 @@ const ModalContainer = styled.View`
   background-color: cornflowerblue;
   border: 1px solid black;
   height: 300px;
+  margin-top: 50%;
 `
 
 const SubmitButton = styled.TouchableOpacity`
