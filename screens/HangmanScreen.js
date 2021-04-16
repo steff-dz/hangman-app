@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, Modal, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import Svg, { Circle, Rect, Line, G } from 'react-native-svg'
 import styled from 'styled-components/native'
+import { styles } from '../theme/stylesTheme'
 
 //this can be moved into a seperate file
 const Alphabet = [
@@ -128,8 +129,10 @@ const HangmanScreen = () => {
   //funciton to show the inputted word-------------------------
   function renderWord() {
     return word.map((char, index) => (
-      <View key={index} style={styles.letterBox}>
-        <Text style={char.guessed ? styles.letterText : styles.hiddenText}>{char.letter}</Text>
+      <View key={index} style={stylesNew.letterBox}>
+        <Text style={char.guessed ? stylesNew.letterText : stylesNew.hiddenText}>
+          {char.letter}
+        </Text>
       </View>
     ))
   }
@@ -139,10 +142,10 @@ const HangmanScreen = () => {
     return alphabetList.map((char, index) => (
       <TouchableOpacity
         key={index}
-        style={styles.alphaBox}
+        style={stylesNew.alphaBox}
         onPress={() => letterPressHandler(char.letter)}
       >
-        <Text style={char.guessed ? styles.hiddenText : styles.alphaText}>{char.letter}</Text>
+        <Text style={char.guessed ? stylesNew.hiddenText : stylesNew.alphaText}>{char.letter}</Text>
       </TouchableOpacity>
     ))
   }
@@ -190,12 +193,12 @@ const HangmanScreen = () => {
   }
 
   return (
-    <Wrapper>
-      <PageTitle>Hangman Game</PageTitle>
+    <View style={styles.container}>
+      <Text style={styles.title}>Hangman Game</Text>
       {gameOver ? (
-        <StartButton onPress={() => setModalDisplay(true)}>
-          <ButtonText>Start Game</ButtonText>
-        </StartButton>
+        <TouchableOpacity style={styles.menuItem} onPress={() => setModalDisplay(true)}>
+          <Text style={styles.menuItemText}>Start Game</Text>
+        </TouchableOpacity>
       ) : (
         showImageHandler()
       )}
@@ -208,39 +211,41 @@ const HangmanScreen = () => {
         visible={modalDisplay}
         onRquestClose={() => setModalDisplay(!modalDisplay)}
       >
-        <ModalContainer>
-          <Text style={{ fontSize: 20, marginTop: 10, paddingLeft: 10 }}>
-            Player 1: Type A Word!
-          </Text>
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Player 1: Type A Word!</Text>
           <TextInput
-            style={styles.inputStyle}
+            style={styles.hangmanInput}
             placeholder="type a word"
             onChangeText={(txt) => setInputWord(txt)}
           />
-          <SubmitButton onPress={() => submitWord()}>
-            <ButtonText>Submit</ButtonText>
-          </SubmitButton>
-        </ModalContainer>
+          <Text style={styles.modalText}>
+            Pass the phone to player 1 so they can type in a word! Player 2 should not see this
+            word. Once the word is submitted, pass the phone back to player 2!
+          </Text>
+          <TouchableOpacity style={styles.modalButton} onPress={() => submitWord()}>
+            <Text style={styles.buttonText}>Submit</Text>
+          </TouchableOpacity>
+        </View>
       </Modal>
-    </Wrapper>
+    </View>
   )
 }
 
 //move styling into a seperate file
-const Wrapper = styled.View`
-  border: 1px solid pink;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  align-items: center;
-`
-const PageTitle = styled.Text`
-  font-size: 30px;
-`
+// const Wrapper = styled.View`
+//   border: 1px solid pink;
+//   display: flex;
+//   flex-direction: column;
+//   flex: 1;
+//   align-items: center;
+// `
+// const PageTitle = styled.Text`
+//   font-size: 30px;
+// `
 
-const StartButton = styled.TouchableOpacity`
-  border: 1px solid black;
-`
+// const StartButton = styled.TouchableOpacity`
+//   border: 1px solid black;
+// `
 
 const ButtonText = styled.Text`
   font-size: 20px;
@@ -248,12 +253,12 @@ const ButtonText = styled.Text`
   text-align: center;
 `
 
-const ModalContainer = styled.View`
-  background-color: cornflowerblue;
-  border: 1px solid black;
-  height: 300px;
-  margin-top: 50%;
-`
+// const ModalContainer = styled.View`
+//   background-color: cornflowerblue;
+//   border: 1px solid black;
+//   height: 300px;
+//   margin-top: 0%;
+// `
 
 const SubmitButton = styled.TouchableOpacity`
   border: 1px solid black;
@@ -281,16 +286,7 @@ const AlphabetContainer = styled.View`
   flex-wrap: wrap;
 `
 
-const styles = StyleSheet.create({
-  inputStyle: {
-    borderWidth: 1,
-    borderColor: 'white',
-    backgroundColor: 'white',
-    paddingLeft: 10,
-    fontSize: 15,
-    height: 30,
-    marginTop: 10,
-  },
+const stylesNew = StyleSheet.create({
   letterBox: {
     height: 40,
     width: 40,
