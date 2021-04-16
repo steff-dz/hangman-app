@@ -1,44 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { View, Modal, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native'
+import { View, Modal, Text, TextInput, TouchableOpacity, Alert } from 'react-native'
 import Svg, { Circle, Rect, Line, G } from 'react-native-svg'
-import styled from 'styled-components/native'
 import { styles } from '../theme/stylesTheme'
-
-//this can be moved into a seperate file
-const Alphabet = [
-  { letter: 'A', guessed: false },
-  { letter: 'B', guessed: false },
-  { letter: 'C', guessed: false },
-  { letter: 'D', guessed: false },
-  { letter: 'E', guessed: false },
-  { letter: 'F', guessed: false },
-  { letter: 'G', guessed: false },
-  { letter: 'H', guessed: false },
-  { letter: 'I', guessed: false },
-  { letter: 'J', guessed: false },
-  { letter: 'K', guessed: false },
-  { letter: 'L', guessed: false },
-  { letter: 'M', guessed: false },
-  { letter: 'N', guessed: false },
-  { letter: 'O', guessed: false },
-  { letter: 'P', guessed: false },
-  { letter: 'Q', guessed: false },
-  { letter: 'R', guessed: false },
-  { letter: 'S', guessed: false },
-  { letter: 'T', guessed: false },
-  { letter: 'U', guessed: false },
-  { letter: 'V', guessed: false },
-  { letter: 'W', guessed: false },
-  { letter: 'X', guessed: false },
-  { letter: 'Y', guessed: false },
-  { letter: 'Z', guessed: false },
-]
+import { Alphabet } from '../utils/alphabet'
 
 const HangmanScreen = () => {
   const [gameOver, setGameOver] = useState(true)
   const [modalDisplay, setModalDisplay] = useState(false)
   const [playerWon, setPlayerWon] = useState(false)
-  const [inputWord, setInputWord] = useState(null)
+  const [inputWord, setInputWord] = useState('')
   const [word, setWord] = useState([])
   const [errors, setErrors] = useState(0)
   const [correctGuess, setCorrectGuess] = useState(0)
@@ -46,9 +16,7 @@ const HangmanScreen = () => {
 
   //useEffect keeping track of errors---------------
   useEffect(() => {
-    console.log('errors state:', errors)
     if (errors === 6) {
-      console.log('you lost sucka!')
       Alert.alert('Alert', 'Player 2 Lost! Play Again!', [
         {
           text: 'Try Again',
@@ -60,11 +28,9 @@ const HangmanScreen = () => {
 
   //UseEffect keeping track of correct guesses---------------
   useEffect(() => {
-    console.log('correctGuess:', correctGuess)
     if (correctGuess === 0) {
       return
     } else if (correctGuess === word.length) {
-      console.log('you won!')
       setPlayerWon(true)
     }
   }, [correctGuess])
@@ -81,20 +47,34 @@ const HangmanScreen = () => {
   //function to render hangman SVG char---------------------------
   function showImage() {
     return (
-      <View style={{ borderBottomWidth: 15, borderRightWidth: 5, borderTopWidth: 5 }}>
+      <View style={styles.figureContainer}>
         <Svg height="250" width="200">
-          <Line x1="100" y1="0" x2="100" y2="30" stroke="black" strokeWidth="5" id="rope" />
+          <Line stroke="#ff8906" x1="100" y1="0" x2="100" y2="30" strokeWidth="5" />
           {errors > 0 && (
-            <Circle cx="100" cy="50" r="25" stroke="black" strokeWidth="2.5" fill="lightgrey" />
+            <Circle cx="100" cy="50" r="25" stroke="#e53170" strokeWidth="2.5" fill="#e53170" />
           )}
           {errors > 1 && (
-            <Rect x="98" y="75" width="5" height="80" stroke="black" strokeWidth="2" fill="black" />
+            <Rect
+              x="98"
+              y="75"
+              width="5"
+              height="80"
+              stroke="#e53170"
+              strokeWidth="2"
+              fill="#e53170"
+            />
           )}
-          {errors > 2 && <Line x1="40" y1="130" x2="100" y2="85" stroke="black" strokeWidth="2" />}
-          {errors > 3 && <Line x1="160" y1="130" x2="100" y2="85" stroke="black" strokeWidth="2" />}
-          {errors > 4 && <Line x1="50" y1="200" x2="100" y2="150" stroke="black" strokeWidth="2" />}
+          {errors > 2 && (
+            <Line x1="40" y1="130" x2="100" y2="85" stroke="#e53170" strokeWidth="2" />
+          )}
+          {errors > 3 && (
+            <Line x1="160" y1="130" x2="100" y2="85" stroke="#e53170" strokeWidth="2" />
+          )}
+          {errors > 4 && (
+            <Line x1="50" y1="200" x2="100" y2="150" stroke="#e53170" strokeWidth="2" />
+          )}
           {errors > 5 && (
-            <Line x1="150" y1="200" x2="100" y2="150" stroke="black" strokeWidth="2" />
+            <Line x1="150" y1="200" x2="100" y2="150" stroke="#e53170" strokeWidth="2" />
           )}
         </Svg>
       </View>
@@ -107,7 +87,7 @@ const HangmanScreen = () => {
     const hasSpaces = inputWord.includes(' ')
     const hasNumbers = /\d/.test(inputWord)
 
-    if (hasSpaces || hasNumbers) {
+    if (hasSpaces || hasNumbers || inputWord.length === 0) {
       Alert.alert('Alert', 'Please write a single word, no spaces or numbers!', [
         {
           text: 'Try Again',
@@ -129,25 +109,33 @@ const HangmanScreen = () => {
   //funciton to show the inputted word-------------------------
   function renderWord() {
     return word.map((char, index) => (
-      <View key={index} style={stylesNew.letterBox}>
-        <Text style={char.guessed ? stylesNew.letterText : stylesNew.hiddenText}>
-          {char.letter}
-        </Text>
+      <View key={index} style={styles.letterContainer}>
+        <Text style={char.guessed ? styles.letterText : styles.hiddenText}>{char.letter}</Text>
       </View>
     ))
   }
 
   //funciton to render the alphabet---------------------------
   function renderAlphabet() {
-    return alphabetList.map((char, index) => (
-      <TouchableOpacity
-        key={index}
-        style={stylesNew.alphaBox}
-        onPress={() => letterPressHandler(char.letter)}
-      >
-        <Text style={char.guessed ? stylesNew.hiddenText : stylesNew.alphaText}>{char.letter}</Text>
-      </TouchableOpacity>
-    ))
+    if (playerWon) {
+      return <Text style={styles.messageText}>You won!</Text>
+    } else {
+      return (
+        <View style={styles.alphabetContainer}>
+          {alphabetList.map((char, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.alphaLetterBox}
+              onPress={() => letterPressHandler(char.letter)}
+            >
+              <Text style={char.guessed ? styles.hiddenText : styles.alphaLetterText}>
+                {char.letter}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )
+    }
   }
 
   //function to handle guessing a letter---------------------
@@ -175,9 +163,8 @@ const HangmanScreen = () => {
   function newGameHandler() {
     return (
       <>
-        <Text>You won!</Text>
-        <TouchableOpacity onPress={() => refreshGameHandler()}>
-          <Text>Play Again</Text>
+        <TouchableOpacity style={styles.playAgainButton} onPress={() => refreshGameHandler()}>
+          <Text style={styles.menuItemText}>Play Again</Text>
         </TouchableOpacity>
       </>
     )
@@ -202,8 +189,8 @@ const HangmanScreen = () => {
       ) : (
         showImageHandler()
       )}
-      <WordContainer>{!gameOver && renderWord()}</WordContainer>
-      {!gameOver && <AlphabetContainer>{renderAlphabet()}</AlphabetContainer>}
+      <View style={styles.wordContainer}>{!gameOver && renderWord()}</View>
+      {!gameOver && renderAlphabet()}
 
       <Modal
         animationType="slide"
@@ -231,86 +218,4 @@ const HangmanScreen = () => {
   )
 }
 
-//move styling into a seperate file
-// const Wrapper = styled.View`
-//   border: 1px solid pink;
-//   display: flex;
-//   flex-direction: column;
-//   flex: 1;
-//   align-items: center;
-// `
-// const PageTitle = styled.Text`
-//   font-size: 30px;
-// `
-
-// const StartButton = styled.TouchableOpacity`
-//   border: 1px solid black;
-// `
-
-const ButtonText = styled.Text`
-  font-size: 20px;
-  padding: 10px;
-  text-align: center;
-`
-
-// const ModalContainer = styled.View`
-//   background-color: cornflowerblue;
-//   border: 1px solid black;
-//   height: 300px;
-//   margin-top: 0%;
-// `
-
-const SubmitButton = styled.TouchableOpacity`
-  border: 1px solid black;
-  margin: 10px auto;
-  width: 200px;
-  background-color: lightgrey;
-`
-
-const WordContainer = styled.View`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: center;
-  margin-top: 10px;
-`
-
-const AlphabetContainer = styled.View`
-  margin-top: 10px;
-  width: 100%;
-  height: 100%;
-  background-color: lightgrey;
-  border: 1px solid black;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-`
-
-const stylesNew = StyleSheet.create({
-  letterBox: {
-    height: 40,
-    width: 40,
-    borderBottomColor: 'black',
-    borderBottomWidth: 1,
-    backgroundColor: 'lightgrey',
-    marginLeft: 2,
-    marginRight: 2,
-  },
-  letterText: {
-    fontSize: 30,
-  },
-  hiddenText: {
-    display: 'none',
-  },
-  alphaBox: {
-    height: 50,
-    width: 50,
-  },
-  alphaText: {
-    fontSize: 40,
-    textAlign: 'center',
-  },
-})
 export default HangmanScreen
-
-//{word.length > 0 ? renderWord() : <Text>Word will come here</Text>}
