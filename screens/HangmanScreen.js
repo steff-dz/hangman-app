@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { View, Modal, Text, TextInput, TouchableOpacity, Alert } from 'react-native'
+import { ScrollView, View, Text, TouchableOpacity, Alert } from 'react-native'
 import { styles } from '../theme/stylesTheme'
 import { Alphabet } from '../utils/alphabet'
+import InputModal from '../components/InputModal'
 import SvgFigure from '../components/SvgFigure'
 
 const HangmanScreen = () => {
   const [gameOver, setGameOver] = useState(true)
   const [modalDisplay, setModalDisplay] = useState(false)
   const [playerWon, setPlayerWon] = useState(false)
-  const [inputWord, setInputWord] = useState('')
   const [word, setWord] = useState([])
   const [errors, setErrors] = useState(0)
   const [correctGuess, setCorrectGuess] = useState(0)
@@ -45,7 +45,7 @@ const HangmanScreen = () => {
   }
 
   //function to handle word submit------------------------------
-  function submitWord() {
+  const submitWord = (inputWord) => {
     //Check to make sure there is no spaces or numbers--
     const hasSpaces = inputWord.includes(' ')
     const hasNumbers = /\d/.test(inputWord)
@@ -84,19 +84,21 @@ const HangmanScreen = () => {
       return <Text style={styles.messageText}>You won!</Text>
     } else {
       return (
-        <View style={styles.alphabetContainer}>
-          {alphabetList.map((char, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.alphaLetterBox}
-              onPress={() => letterPressHandler(char.letter)}
-            >
-              <Text style={char.guessed ? styles.hiddenText : styles.alphaLetterText}>
-                {char.letter}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        <ScrollView>
+          <View style={styles.alphabetContainer}>
+            {alphabetList.map((char, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.alphaLetterBox}
+                onPress={() => letterPressHandler(char.letter)}
+              >
+                <Text style={char.guessed ? styles.hiddenText : styles.alphaLetterText}>
+                  {char.letter}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
       )
     }
   }
@@ -134,7 +136,6 @@ const HangmanScreen = () => {
   function refreshGameHandler() {
     setGameOver(true)
     setErrors(0)
-    setInputWord(null)
     setCorrectGuess(0)
     setPlayerWon(false)
     setAlphabetList(Alphabet)
@@ -153,28 +154,7 @@ const HangmanScreen = () => {
       <View style={styles.wordContainer}>{!gameOver && renderWord()}</View>
       {!gameOver && renderAlphabet()}
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalDisplay}
-        onRquestClose={() => setModalDisplay(!modalDisplay)}
-      >
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Player 1: Type A Word!</Text>
-          <TextInput
-            style={styles.hangmanInput}
-            placeholder="type a word"
-            onChangeText={(txt) => setInputWord(txt)}
-          />
-          <Text style={styles.modalText}>
-            Pass the phone to player 1 so they can type in a word! Player 2 should not see this
-            word. Once the word is submitted, pass the phone back to player 2!
-          </Text>
-          <TouchableOpacity style={styles.modalButton} onPress={() => submitWord()}>
-            <Text style={styles.buttonText}>Submit</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
+      <InputModal modalDisplay={modalDisplay} submitWord={submitWord} />
     </View>
   )
 }

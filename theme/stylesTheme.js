@@ -96,11 +96,13 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'center',
+    flexWrap: 'wrap',
     marginTop: theme.space[3],
   },
   letterContainer: {
     height: 45,
     width: 45,
+    margin: 5,
     backgroundColor: theme.palette.white,
     marginLeft: theme.space[1],
     marginRight: theme.space[1],
