@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { View, Modal, Text, TextInput, TouchableOpacity, Alert } from 'react-native'
-import Svg, { Circle, Rect, Line } from 'react-native-svg'
 import { styles } from '../theme/stylesTheme'
 import { Alphabet } from '../utils/alphabet'
 import SvgFigure from '../components/SvgFigure'
@@ -51,7 +50,7 @@ const HangmanScreen = () => {
     const hasSpaces = inputWord.includes(' ')
     const hasNumbers = /\d/.test(inputWord)
 
-    if (hasSpaces || hasNumbers || inputWord.length === 0) {
+    if (hasSpaces || hasNumbers || inputWord.length <= 1) {
       Alert.alert('Alert', 'Please write a single word, no spaces or numbers!', [
         {
           text: 'Try Again',
@@ -111,12 +110,10 @@ const HangmanScreen = () => {
     let lowerLetter = letter.toLowerCase()
     let filteredWord = word.filter((el) => el.letter === lowerLetter)
 
-    if (filteredWord.length > 1) {
-      setCorrectGuess(correctGuess + 2)
-    } else if (filteredWord.length === 1) {
-      setCorrectGuess(correctGuess + 1)
-    } else if (filteredWord.length === 0) {
+    if (filteredWord.length === 0) {
       setErrors(errors + 1)
+    } else {
+      setCorrectGuess(correctGuess + filteredWord.length)
     }
 
     let newWordArray = word.map((el) => (el.letter === lowerLetter ? { ...el, guessed: true } : el))

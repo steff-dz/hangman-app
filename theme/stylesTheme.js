@@ -135,10 +135,13 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.palette.orange,
     padding: theme.space[4],
     borderRadius: 15,
+    marginTop: '4%',
+    marginBottom: '3%',
   },
   messageText: {
     color: theme.palette.white,
-    fontSize: theme.fontSizes.md,
+    fontSize: 70,
     fontFamily: 'Ubuntu_400Regular',
+    marginTop: '4%',
   },
 })
