@@ -4,12 +4,14 @@ import { styles } from '../theme/stylesTheme'
 import { Alphabet } from '../utils/alphabet'
 import InputModal from '../components/InputModal'
 import SvgFigure from '../components/SvgFigure'
+import { fetchWord } from '../utils/gameHelpers'
 
 const HangmanScreen = () => {
   const [gameOver, setGameOver] = useState(true)
   const [modalDisplay, setModalDisplay] = useState(false)
   const [playerWon, setPlayerWon] = useState(false)
   const [word, setWord] = useState([])
+  const [answerWord, setAnswerWord] = useState('')
   const [errors, setErrors] = useState(0)
   const [correctGuess, setCorrectGuess] = useState(0)
   const [alphabetList, setAlphabetList] = useState(Alphabet)
@@ -17,9 +19,9 @@ const HangmanScreen = () => {
   //useEffect keeping track of errors---------------
   useEffect(() => {
     if (errors === 6) {
-      Alert.alert('Alert', 'Player 2 Lost! Play Again!', [
+      Alert.alert('You Lost!', `The answer was: ${answerWord}`, [
         {
-          text: 'Try Again',
+          text: 'Play Again',
         },
       ])
       refreshGameHandler()
@@ -46,6 +48,7 @@ const HangmanScreen = () => {
 
   //function to handle word submit------------------------------
   const submitWord = (inputWord) => {
+    setAnswerWord(inputWord)
     //Check to make sure there is no spaces or numbers--
     const hasSpaces = inputWord.includes(' ')
     const hasNumbers = /\d/.test(inputWord)
@@ -67,6 +70,11 @@ const HangmanScreen = () => {
       setModalDisplay(false)
       setGameOver(false)
     }
+  }
+
+  async function fetchWordHandle() {
+    result = await fetchWord()
+    submitWord(result[0])
   }
 
   //funciton to show the inputted word-------------------------
@@ -145,9 +153,14 @@ const HangmanScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Hangman Game</Text>
       {gameOver ? (
-        <TouchableOpacity style={styles.menuItem} onPress={() => setModalDisplay(true)}>
-          <Text style={styles.menuItemText}>Start Game</Text>
-        </TouchableOpacity>
+        <View>
+          <TouchableOpacity style={styles.menuItem} onPress={() => setModalDisplay(true)}>
+            <Text style={styles.menuItemText}>Start Player vs Player</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={() => fetchWordHandle()}>
+            <Text style={styles.menuItemText}>Start Player vs Aliens</Text>
+          </TouchableOpacity>
+        </View>
       ) : (
         showImageHandler()
       )}
