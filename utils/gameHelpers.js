@@ -1,3 +1,3 @@
 export function fetchWord() {
-  return fetch('https://random-word-api.herokuapp.com/word?number=1').then((res) => res.json())
+  return fetch('https://random-words-api.vercel.app/word').then((res) => res.json())
 }

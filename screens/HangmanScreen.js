@@ -16,15 +16,29 @@ const HangmanScreen = () => {
   const [correctGuess, setCorrectGuess] = useState(0)
   const [alphabetList, setAlphabetList] = useState(Alphabet)
 
-  //useEffect keeping track of errors---------------
+  //useEffect keeping track of errors & losting the game---------------
   useEffect(() => {
     if (errors === 6) {
-      Alert.alert('You Lost!', `The answer was: ${answerWord}`, [
-        {
-          text: 'Play Again',
-        },
-      ])
-      refreshGameHandler()
+      if (answerWord.definition.length === 0) {
+        Alert.alert('You Lost!', `The answer was: ${answerWord.word}`, [
+          {
+            text: 'Play Again',
+          },
+        ])
+        refreshGameHandler()
+      } else {
+        Alert.alert(
+          'You Lost!',
+          `The answer was ${answerWord.word}:
+          ${answerWord.definition}`,
+          [
+            {
+              text: 'Play Again',
+            },
+          ]
+        )
+        refreshGameHandler()
+      }
     }
   }, [errors])
 
@@ -48,11 +62,9 @@ const HangmanScreen = () => {
 
   //function to handle word submit------------------------------
   const submitWord = (inputWord) => {
-    setAnswerWord(inputWord)
     //Check to make sure there is no spaces or numbers--
     const hasSpaces = inputWord.includes(' ')
     const hasNumbers = /\d/.test(inputWord)
-
     if (hasSpaces || hasNumbers || inputWord.length <= 1) {
       Alert.alert('Alert', 'Please write a single word, no spaces or numbers!', [
         {
@@ -72,9 +84,14 @@ const HangmanScreen = () => {
     }
   }
 
+  const answerHandler = (word) => {
+    setAnswerWord({ word, definition: '' })
+  }
+
   async function fetchWordHandle() {
-    result = await fetchWord()
-    submitWord(result[0])
+    const result = await fetchWord()
+    setAnswerWord({ word: result[0].word, definition: result[0].definition })
+    submitWord(result[0].word.toLowerCase())
   }
 
   //funciton to show the inputted word-------------------------
@@ -131,6 +148,7 @@ const HangmanScreen = () => {
     setWord(newWordArray)
   }
 
+  //function to start game refresh------------------------------
   function newGameHandler() {
     return (
       <>
@@ -141,6 +159,7 @@ const HangmanScreen = () => {
     )
   }
 
+  //function to refresh the game----------------------------------
   function refreshGameHandler() {
     setGameOver(true)
     setErrors(0)
@@ -167,7 +186,11 @@ const HangmanScreen = () => {
       <View style={styles.wordContainer}>{!gameOver && renderWord()}</View>
       {!gameOver && renderAlphabet()}
 
-      <InputModal modalDisplay={modalDisplay} submitWord={submitWord} />
+      <InputModal
+        modalDisplay={modalDisplay}
+        submitWord={submitWord}
+        answerHandler={answerHandler}
+      />
     </View>
   )
 }

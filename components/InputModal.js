@@ -2,11 +2,12 @@ import React, { useState } from 'react'
 import { View, Modal, Text, TextInput, TouchableOpacity } from 'react-native'
 import { styles } from '../theme/stylesTheme'
 
-const InputModal = ({ modalDisplay, submitWord }) => {
+const InputModal = ({ modalDisplay, submitWord, answerHandler }) => {
   //const [modalDisplay, setModalDisplay] = useState(false)
   const [inputWord, setInputWord] = useState('')
 
   function handleInput() {
+    answerHandler(inputWord)
     let editedWord = inputWord.toLowerCase()
     submitWord(editedWord)
     setInputWord('')
