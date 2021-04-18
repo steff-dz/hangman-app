@@ -5,7 +5,7 @@ import { styles } from '../theme/stylesTheme'
 
 const SvgFigure = ({ errors }) => {
   return (
-    <View style={styles.figureContainer}>
+    <View accessibilityLabel="contains the hangman image" style={styles.figureContainer}>
       <Svg height="250" width="200">
         <Line stroke="#ff8906" x1="100" y1="0" x2="100" y2="30" strokeWidth="5" />
         {errors > 0 && (

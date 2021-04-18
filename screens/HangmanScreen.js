@@ -98,7 +98,12 @@ const HangmanScreen = () => {
   function renderWord() {
     return word.map((char, index) => (
       <View key={index} style={styles.letterContainer}>
-        <Text style={char.guessed ? styles.letterText : styles.hiddenText}>{char.letter}</Text>
+        <Text
+          accessiblityLabel="container for the word to be guessed"
+          style={char.guessed ? styles.letterText : styles.hiddenText}
+        >
+          {char.letter}
+        </Text>
       </View>
     ))
   }
@@ -106,13 +111,22 @@ const HangmanScreen = () => {
   //funciton to render the alphabet---------------------------
   function renderAlphabet() {
     if (playerWon) {
-      return <Text style={styles.messageText}>You won!</Text>
+      return (
+        <Text accessibilityLabel="You won message" style={styles.messageText}>
+          You won!
+        </Text>
+      )
     } else {
       return (
         <ScrollView>
-          <View style={styles.alphabetContainer}>
+          <View
+            accessibilityLabel="Press to guess a letter in the alphabet"
+            style={styles.alphabetContainer}
+          >
             {alphabetList.map((char, index) => (
               <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="Press to guess the letter"
                 key={index}
                 style={styles.alphaLetterBox}
                 onPress={() => letterPressHandler(char.letter)}
@@ -152,7 +166,12 @@ const HangmanScreen = () => {
   function newGameHandler() {
     return (
       <>
-        <TouchableOpacity style={styles.playAgainButton} onPress={() => refreshGameHandler()}>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Press to re-start the game"
+          style={styles.playAgainButton}
+          onPress={() => refreshGameHandler()}
+        >
           <Text style={styles.menuItemText}>Play Again</Text>
         </TouchableOpacity>
       </>
@@ -169,14 +188,24 @@ const HangmanScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} accessible={true}>
       <Text style={styles.title}>Hangman Game</Text>
       {gameOver ? (
         <View>
-          <TouchableOpacity style={styles.menuItem} onPress={() => setModalDisplay(true)}>
+          <TouchableOpacity
+            accessibilityLabel="Play against another person"
+            accessibilityRole="button"
+            style={styles.menuItem}
+            onPress={() => setModalDisplay(true)}
+          >
             <Text style={styles.menuItemText}>Start Player vs Player</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.menuItem} onPress={() => fetchWordHandle()}>
+          <TouchableOpacity
+            accessibilityLabel="Play against the computer"
+            accessibilityRole="button"
+            style={styles.menuItem}
+            onPress={() => fetchWordHandle()}
+          >
             <Text style={styles.menuItemText}>Start Player vs Aliens</Text>
           </TouchableOpacity>
         </View>
@@ -187,6 +216,8 @@ const HangmanScreen = () => {
       {!gameOver && renderAlphabet()}
 
       <InputModal
+        accessibilityLabel="form for player 1 to write a word"
+        accessibilityRole="form"
         modalDisplay={modalDisplay}
         submitWord={submitWord}
         answerHandler={answerHandler}

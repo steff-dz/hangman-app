@@ -18,6 +18,7 @@ const InputModal = ({ modalDisplay, submitWord, answerHandler }) => {
       <View style={styles.modalContainer}>
         <Text style={styles.modalTitle}>Player 1: Type A Word!</Text>
         <TextInput
+          accessibilityLabel="Player one types in a word here"
           style={styles.hangmanInput}
           placeholder="type a word"
           onChangeText={(txt) => setInputWord(txt)}
@@ -26,7 +27,12 @@ const InputModal = ({ modalDisplay, submitWord, answerHandler }) => {
           Pass the phone to player 1 so they can type in a word! Player 2 should not see this word.
           Once the word is submitted, pass the phone back to player 2!
         </Text>
-        <TouchableOpacity style={styles.modalButton} onPress={() => handleInput()}>
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Press to submit word"
+          style={styles.modalButton}
+          onPress={() => handleInput()}
+        >
           <Text style={styles.buttonText}>Submit</Text>
         </TouchableOpacity>
       </View>
